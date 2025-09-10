@@ -1,0 +1,43 @@
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.app-header {
+  border-bottom: 1px solid #1e293b;
+  background: linear-gradient(90deg, #0b1220, #0f172a);
+}
+
+.app-header .brand {
+  margin: 0;
+  font-size: 20px;
+}
+
+.app-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+}
+
+.nav a {
+  color: #e2e8f0;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.nav a.active {
+  background: #1e293b;
+  color: #93c5fd;
+}
+
+.app-main {
+  padding: 24px 0;
+}

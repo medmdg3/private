@@ -1,0 +1,14 @@
+<header class="app-header">
+  <div class="container">
+    <h1 class="brand">Benomar El Mdeghri Mohammed</h1>
+    <nav class="nav">
+      <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">Home</a>
+      <a routerLink="/timeline" routerLinkActive="active">Timeline</a>
+      <!-- Projects temporarily hidden -->
+    </nav>
+  </div>
+  </header>
+
+<main class="app-main container">
+  <router-outlet></router-outlet>
+</main>

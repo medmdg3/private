@@ -1,0 +1,107 @@
+<section class="timeline">
+  <aside class="timeline__filters">
+    <div class="timeline__filters-group">
+      <span class="timeline__filters-label">Filter by tag</span>
+      <div class="timeline__chips">
+        <ng-container *ngFor="let t of availableTags">
+          <button
+            class="chip"
+            type="button"
+            [class.is-active]="selectedTags.has(t)"
+            [style.--chip-color]="getTagColor(t)"
+            (click)="toggleTag(t)"
+          >
+            <span class="chip__dot" aria-hidden="true"></span>
+            {{ t }}
+          </button>
+        </ng-container>
+      </div>
+      <button class="chip chip--clear" type="button" (click)="clearFilters()" *ngIf="selectedTags.size">Clear</button>
+    </div>
+
+    <div class="timeline__filters-group">
+      <span class="timeline__filters-label">Filter by rarity</span>
+      <div class="timeline__chips">
+        <button class="chip" type="button" [class.is-active]="raritySelected.has('normal')" (click)="toggleRarity('normal')">Normal</button>
+        <button class="chip" type="button" [class.is-active]="raritySelected.has('golden')" (click)="toggleRarity('golden')">Golden</button>
+        <button class="chip" type="button" [class.is-active]="raritySelected.has('diamond')" (click)="toggleRarity('diamond')">Diamond</button>
+        <button class="chip chip--clear" type="button" (click)="clearRarity()" *ngIf="raritySelected.size">Clear</button>
+      </div>
+      <button class="chip" type="button" (click)="toggleOrder()">
+        {{ descending ? 'Newest -> Oldest' : 'Oldest -> Newest' }}
+      </button>
+    </div>
+  </aside>
+  <div class="timeline__line"></div>
+  
+
+  <article
+    class="timeline__item"
+    *ngFor="let e of filteredEvents; let i = index"
+    [class.is-active]="active === e"
+    [style.marginTop.px]="getItemMargin(i)"
+  >
+    <div
+      class="timeline__line-break"
+      *ngIf="hasDiscontinuity(i)"
+      [style.top.px]="-getItemMargin(i) / 2"
+    ></div>
+    <div class="timeline__year" *ngIf="isNewYear(i)">{{ e.date | date: 'yyyy' }}</div>
+    <div class="timeline__date">{{ e.date | date: 'MMM yyyy' }}</div>
+    <button
+      class="timeline__dot"
+      type="button"
+      (click)="toggle(e)"
+      (mouseenter)="onEnter(e)"
+      (mouseleave)="onLeave(e)"
+      [style.--dot-bg]="getDotBackground(e)"
+      [class.is-golden]="e.golden"
+      [class.is-diamond]="e.diamond"
+      [attr.aria-pressed]="active === e"
+      aria-label="Toggle event details"
+    ></button>
+    <!-- Always-visible compact title near the node for quick scanning -->
+    <div class="timeline__node-title" *ngIf="!isDisplayed(e)">{{ e.title }}</div>
+
+    <div class="timeline__popover" *ngIf="isDisplayed(e)">
+      <h3 class="timeline__title">{{ e.title }}</h3>
+      <div class="timeline__subtitle" *ngIf="e.subtitle">{{ e.subtitle }}</div>
+      <p class="timeline__desc" *ngIf="e.description" style="white-space: pre-line;">{{ e.description }}</p>
+      <div class="timeline__media" *ngIf="getEventMedia(e)?.length">
+        <ng-container *ngIf="getCurrentMedia(e) as m">
+          <img
+            *ngIf="!isMediaVideo(m)"
+            [src]="getMediaSrc(m)"
+            alt=""
+            class="media"
+            [class.keep-ratio]="isMediaKeepRatio(m)"
+            [class.is-zoom-1]="getMediaZoom(m) === 1"
+            [class.is-zoom-2]="getMediaZoom(m) === 2"
+            (click)="onMediaClick($event, m)"
+          />
+          <video
+            *ngIf="isMediaVideo(m)"
+            [src]="getMediaSrc(m)"
+            class="media"
+            [class.keep-ratio]="isMediaKeepRatio(m)"
+            [class.is-zoom-1]="getMediaZoom(m) === 1"
+            [class.is-zoom-2]="getMediaZoom(m) === 2"
+            (dblclick)="onMediaClick($event, m)"
+            controls
+            playsinline
+            preload="metadata"
+          ></video>
+        </ng-container>
+        <div class="timeline__media-nav" *ngIf="hasMultipleMedia(e)">
+          <button type="button" class="media-nav-btn" (click)="prevMedia(e)">Prev</button>
+          <span class="media-counter">{{ getCurrentMediaIndex(e) + 1 }} / {{ getEventMedia(e).length }}</span>
+          <button type="button" class="media-nav-btn" (click)="nextMedia(e)">Next</button>
+        </div>
+      </div>
+      <ul class="timeline__tags" *ngIf="e.tags?.length">
+        <li class="timeline__tag" *ngFor="let t of e.tags">{{ t }}</li>
+      </ul>
+    </div>
+  </article>
+</section>
+

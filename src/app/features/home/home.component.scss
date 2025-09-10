@@ -1,0 +1,43 @@
+.home {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.home__media img {
+  display: block;
+  width: 220px;
+  height: 220px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+}
+
+.home__content h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.home__content p {
+  color: #cbd5e1;
+}
+
+.home__actions {
+  margin-top: 16px;
+}
+
+.btn {
+  display: inline-block;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 14px rgba(22, 163, 74, 0.25);
+}
+
+.btn.btn--alt {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}

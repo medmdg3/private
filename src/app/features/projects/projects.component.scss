@@ -1,0 +1,84 @@
+.projects__title {
+  margin: 0 0 12px;
+}
+
+.under-construction {
+  background: linear-gradient(180deg, #0b1220, #0f172a);
+  border: 1px dashed #1e293b;
+  border-radius: 12px;
+  padding: 20px;
+  color: #cbd5e1;
+}
+
+.projects__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.project-card {
+  background: linear-gradient(180deg, #0b1220, #0f172a);
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #e5e7eb;
+}
+
+.project-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-card__name { margin: 0; font-size: 16px; color: #f1f5f9; }
+
+.project-card__short { color: #cbd5e1; margin: 8px 0 8px; }
+
+.project-card__tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  background: #0b1220;
+  color: #e2e8f0;
+  border: 1px solid #1e293b;
+  border-radius: 999px;
+}
+
+.project-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.btn--primary {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  color: #fff;
+  border: 0;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+}
+
+.btn--ghost {
+  background: #0b1220;
+  color: #e2e8f0;
+  border: 1px solid #1e293b;
+}
+
+.project-card__details {
+  margin-top: 10px;
+  border-top: 1px dashed #1e293b;
+  padding-top: 10px;
+}
+
+.project-card__desc { color: #cbd5e1; margin: 0 0 6px; }
+
+.project-card__list { margin: 0; padding-left: 18px; color: #e5e7eb; }
