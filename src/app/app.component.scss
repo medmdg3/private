@@ -1,43 +1,98 @@
 .container {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
 .app-header {
-  border-bottom: 1px solid #1e293b;
-  background: linear-gradient(90deg, #0b1220, #0f172a);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+  background: rgba(11, 18, 32, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .app-header .brand {
   margin: 0;
-  font-size: 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.025em;
 }
 
 .app-header .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 20px 24px;
+  min-height: 60px;
 }
 
 .nav {
   display: flex;
-  gap: 16px;
+  gap: 8px;
+  align-items: center;
 }
 
 .nav a {
-  color: #e2e8f0;
+  color: #cbd5e1;
   text-decoration: none;
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav a:hover {
+  color: #f8fafc;
+  background: rgba(30, 41, 59, 0.3);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.nav a:hover::before {
+  opacity: 1;
 }
 
 .nav a.active {
-  background: #1e293b;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
   color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.nav a.active::before {
+  opacity: 1;
 }
 
 .app-main {
-  padding: 24px 0;
+  padding: 32px 0;
+  min-height: calc(100vh - 100px);
 }

@@ -1,38 +1,6 @@
 <section class="timeline">
-  <aside class="timeline__filters">
-    <div class="timeline__filters-group">
-      <span class="timeline__filters-label">Filter by tag</span>
-      <div class="timeline__chips">
-        <ng-container *ngFor="let t of availableTags">
-          <button
-            class="chip"
-            type="button"
-            [class.is-active]="selectedTags.has(t)"
-            [style.--chip-color]="getTagColor(t)"
-            (click)="toggleTag(t)"
-          >
-            <span class="chip__dot" aria-hidden="true"></span>
-            {{ t }}
-          </button>
-        </ng-container>
-      </div>
-      <button class="chip chip--clear" type="button" (click)="clearFilters()" *ngIf="selectedTags.size">Clear</button>
-    </div>
-
-    <div class="timeline__filters-group">
-      <span class="timeline__filters-label">Filter by rarity</span>
-      <div class="timeline__chips">
-        <button class="chip" type="button" [class.is-active]="raritySelected.has('normal')" (click)="toggleRarity('normal')">Normal</button>
-        <button class="chip" type="button" [class.is-active]="raritySelected.has('golden')" (click)="toggleRarity('golden')">Golden</button>
-        <button class="chip" type="button" [class.is-active]="raritySelected.has('diamond')" (click)="toggleRarity('diamond')">Diamond</button>
-        <button class="chip chip--clear" type="button" (click)="clearRarity()" *ngIf="raritySelected.size">Clear</button>
-      </div>
-      <button class="chip" type="button" (click)="toggleOrder()">
-        {{ descending ? 'Newest -> Oldest' : 'Oldest -> Newest' }}
-      </button>
-    </div>
-  </aside>
-  <div class="timeline__line"></div>
+  <div class="timeline__content">
+    <div class="timeline__line"></div>
   
 
   <article
@@ -103,5 +71,40 @@
       </ul>
     </div>
   </article>
+  </div>
+  
+  <aside class="timeline__filters">
+    <div class="timeline__filters-group">
+      <span class="timeline__filters-label">Filter by tag</span>
+      <div class="timeline__chips">
+        <ng-container *ngFor="let t of availableTags">
+          <button
+            class="chip"
+            type="button"
+            [class.is-active]="selectedTags.has(t)"
+            [style.--chip-color]="getTagColor(t)"
+            (click)="toggleTag(t)"
+          >
+            <span class="chip__dot" aria-hidden="true"></span>
+            {{ t }}
+          </button>
+        </ng-container>
+      </div>
+      <button class="chip chip--clear" type="button" (click)="clearFilters()" *ngIf="selectedTags.size">Clear</button>
+    </div>
+
+    <div class="timeline__filters-group">
+      <span class="timeline__filters-label">Filter by shape</span>
+      <div class="timeline__chips">
+        <button class="chip" type="button" [class.is-active]="raritySelected.has('normal')" (click)="toggleRarity('normal')">Circle</button>
+        <button class="chip" type="button" [class.is-active]="raritySelected.has('golden')" (click)="toggleRarity('golden')">Square</button>
+        <button class="chip" type="button" [class.is-active]="raritySelected.has('diamond')" (click)="toggleRarity('diamond')">Diamond</button>
+        <button class="chip chip--clear" type="button" (click)="clearRarity()" *ngIf="raritySelected.size">Clear</button>
+      </div>
+      <button class="chip" type="button" (click)="toggleOrder()">
+        {{ descending ? 'Newest -> Oldest' : 'Oldest -> Newest' }}
+      </button>
+    </div>
+  </aside>
 </section>
 
