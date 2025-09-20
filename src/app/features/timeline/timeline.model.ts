@@ -29,7 +29,8 @@ export interface TimelineEvent {
   title: string; // e.g., 'Senior Developer'
   subtitle?: string; // e.g., 'Company XYZ'
   description?: string;
-  tags?: string[];
+  /** Tags associated with the event */
+  tags?: (import('./tags').Tag | string)[];
   /** Unified, ordered media list (preferred). */
   media?: Array<string | TimelineMedia>;
   /** Back-compat: old fields are still supported and merged if `media` is absent. */

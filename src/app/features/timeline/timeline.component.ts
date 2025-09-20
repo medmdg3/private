@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TIMELINE } from './timeline.data';
 import { TimelineEvent, TimelinePhoto, TimelineVideo, TimelineMedia } from './timeline.model';
+import { Tag, TAG_META, tagColor, tagLabel, tagLogo, toTag } from './tags';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss'
 })
@@ -18,6 +20,8 @@ export class TimelineComponent implements OnInit {
   hovered: TimelineEvent | null = null;
   useTemporalSpacing = true; // always on
   descending = false; // default newest -> oldest
+  // Toggle to show concise descriptions
+  useShortDescriptions = false;
 
   // Temporal spacing controls
   readonly nodeHeightPx = 0; // approximate visual node height
@@ -26,6 +30,9 @@ export class TimelineComponent implements OnInit {
 
   // Tag filtering state
   selectedTags = new Set<string>();
+  
+  // Filter panel toggle state
+  isFilterPanelOpen = false;
 
   // Photo zoom level per URL: 0 (default), 1 (big), 2 (bigger)
   private photoZoom = new Map<string, number>();
@@ -56,8 +63,19 @@ export class TimelineComponent implements OnInit {
     }
   }
 
+  // Return the appropriate description based on toggle and fallback rules
+  getDescription(e: TimelineEvent): string | undefined {
+    if (this.useShortDescriptions) return e.shortDescription || e.description;
+    return e.description || e.shortDescription;
+  }
+
   ngOnInit(): void {
     this.ensureActiveInFiltered();
+    // Ensure mobile detection works on init
+    this.checkMobile();
+    
+    // Listen for window resize
+    window.addEventListener('resize', () => this.checkMobile());
   }
   // Base color palette (also used for tag colors)
   readonly colorMap: Record<string, string> = {
@@ -78,17 +96,27 @@ export class TimelineComponent implements OnInit {
   violet: '#8b5cf6',
 };
 
-  // Build unique tag list from events
-  get availableTags(): string[] {
-    const set = new Set<string>();
+  // Build unique tag list from events (normalized to label order)
+  get availableTags(): Array<Tag | string> {
+    const set = new Set<string | Tag>();
     for (const e of this.events) e.tags?.forEach((t) => set.add(t));
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
+    // Prefer known enum tag order
+    const known = Array.from(set).filter((t) => !!toTag(t)) as Tag[];
+    const unknown = Array.from(set).filter((t) => !toTag(t));
+    // keep known ordered by label, then unknown alphabetically
+    known.sort((a, b) => tagLabel(a).localeCompare(tagLabel(b)));
+    (unknown as string[]).sort((a, b) => String(a).localeCompare(String(b)));
+    return [...known, ...unknown];
   }
 
   // Rarity filter state (multi-select)
   raritySelected = new Set<'normal' | 'golden' | 'diamond'>();
 
   isDisplayed(e: TimelineEvent): boolean {
+    // On mobile, always show all events
+    if (this.isMobile()) {
+      return true;
+    }
     // Hover has priority over click; if hovering something, show that; otherwise show the active one
     return this.hovered ? this.hovered === e : this.active === e;
   }
@@ -118,6 +146,8 @@ export class TimelineComponent implements OnInit {
     this.selectedTags.clear();
     this.ensureActiveInFiltered();
   }
+
+  
 
   // Media interactions (zoom)
   getMediaZoom(m: string | (TimelineMedia | TimelinePhoto | TimelineVideo)): number {
@@ -176,6 +206,9 @@ export class TimelineComponent implements OnInit {
     const key = this.evKey(e);
     const curr = this.getCurrentMediaIndex(e);
     this.mediaIndex.set(key, (curr + 1) % media.length);
+    
+    // Add smooth transition effect
+    this.triggerMediaTransition();
   }
 
   prevMedia(e: TimelineEvent): void {
@@ -184,6 +217,24 @@ export class TimelineComponent implements OnInit {
     const key = this.evKey(e);
     const curr = this.getCurrentMediaIndex(e);
     this.mediaIndex.set(key, (curr - 1 + media.length) % media.length);
+    
+    // Add smooth transition effect
+    this.triggerMediaTransition();
+  }
+
+  goToMedia(e: TimelineEvent, index: number): void {
+    const media = this.getEventMedia(e);
+    if (!media.length || index < 0 || index >= media.length) return;
+    const key = this.evKey(e);
+    this.mediaIndex.set(key, index);
+    
+    // Add smooth transition effect
+    this.triggerMediaTransition();
+  }
+
+  private triggerMediaTransition(): void {
+    // This will be handled by CSS transitions
+    // The transition is applied to the media elements themselves
   }
 
   // Rarity helpers
@@ -202,6 +253,73 @@ export class TimelineComponent implements OnInit {
   clearRarity(): void {
     this.raritySelected.clear();
     this.ensureActiveInFiltered();
+  }
+
+  toggleFilterPanel(): void {
+    this.isFilterPanelOpen = !this.isFilterPanelOpen;
+  }
+  
+  // Check if we're on mobile
+  isMobile(): boolean {
+    return window.innerWidth <= 768;
+  }
+  
+  private checkMobile(): void {
+    // Force change detection for mobile state
+    if (typeof window !== 'undefined') {
+      // Trigger change detection
+      setTimeout(() => {}, 0);
+    }
+  }
+  
+  // Instagram-style filter states for mobile
+  isTagFilterOpen: boolean = false;
+  isShapeFilterOpen: boolean = false;
+  tagSearchQuery: string = '';
+  shapeSearchQuery: string = '';
+  
+  toggleTagFilter(): void {
+    this.isTagFilterOpen = !this.isTagFilterOpen;
+  }
+  
+  toggleShapeFilter(): void {
+    this.isShapeFilterOpen = !this.isShapeFilterOpen;
+  }
+  
+  // Filter tags based on search query
+  get filteredTags() {
+    if (!this.tagSearchQuery.trim()) {
+      return this.availableTags;
+    }
+    return this.availableTags.filter(tag => 
+      this.getTagLabel(tag).toLowerCase().includes(this.tagSearchQuery.toLowerCase())
+    );
+  }
+  
+  // Filter shapes based on search query
+  get filteredShapes() {
+    const shapes: { key: 'normal' | 'golden' | 'diamond', label: string }[] = [
+      { key: 'normal', label: 'Circle' },
+      { key: 'golden', label: 'Golden' },
+      { key: 'diamond', label: 'Diamond' }
+    ];
+    
+    if (!this.shapeSearchQuery.trim()) {
+      return shapes;
+    }
+    return shapes.filter(shape => 
+      shape.label.toLowerCase().includes(this.shapeSearchQuery.toLowerCase())
+    );
+  }
+  
+  // Helper method for template type safety
+  isShapeSelected(shapeKey: string): boolean {
+    return this.raritySelected.has(shapeKey as 'normal' | 'golden' | 'diamond');
+  }
+  
+  // Helper method for template type safety
+  toggleShape(shapeKey: string): void {
+    this.toggleRarity(shapeKey as 'normal' | 'golden' | 'diamond');
   }
 
   private matchesRarity(e: TimelineEvent): boolean {
@@ -246,22 +364,24 @@ export class TimelineComponent implements OnInit {
   }
 
   // Deterministically assign a color to a given tag
-  getTagColor(tag: string): string {
+  getTagColor(tag: Tag | string): string {
+    // Prefer enum-defined colors; fallback to deterministic hash
+    const c = tagColor(tag);
+    if (c) return c;
     const palette = Object.values(this.colorMap);
+    const s = typeof tag === 'string' ? tag : tagLabel(tag);
     let hash = 0;
-    for (let i = 0; i < tag.length; i++) {
-      hash = (hash * 135 + tag.charCodeAt(i)) >>> 0;
-    }
+    for (let i = 0; i < s.length; i++) hash = (hash * 135 + s.charCodeAt(i)) >>> 0;
     return palette[hash % palette.length];
   }
 
   getDotBackground(e: TimelineEvent): string {
     const tags = e.tags ?? [];
     const visibleTags = this.selectedTags.size
-      ? tags.filter((t) => this.selectedTags.has(t))
+      ? tags.filter((t) => this.selectedTags.has(typeof t === 'string' ? t : tagLabel(t)))
       : tags;
     const tagColors = visibleTags.length
-      ? visibleTags.map((t) => this.getTagColor(t))
+      ? visibleTags.map((t) => this.getTagColor(t as any))
       : [this.colorMap['indigo']];
     if (tagColors.length === 1) return tagColors[0];
     const step = 360 / tagColors.length;
@@ -272,6 +392,24 @@ export class TimelineComponent implements OnInit {
       stops.push(`${col} ${a}deg ${b}deg`);
     });
     return `conic-gradient(${stops.join(', ')})`;
+  }
+
+  getTagLabel(t: Tag | string): string { return tagLabel(t); }
+
+  getTagLogo(t: Tag | string): string | null { return tagLogo(t); }
+
+  getEventTagLogos(e: TimelineEvent): Array<{ tag: Tag | string; logo: string }>{
+    const list: Array<{ tag: Tag | string; logo: string }> = [];
+    for (const t of e.tags ?? []) {
+      const logo = this.getTagLogo(t);
+      if (logo) list.push({ tag: t, logo });
+    }
+    return list;
+  }
+
+  getFirstEventLogo(e: TimelineEvent): { tag: Tag | string; logo: string } | null {
+    const logos = this.getEventTagLogos(e);
+    return logos.length > 0 ? logos[0] : null;
   }
 
   // Date helpers
@@ -332,4 +470,5 @@ export class TimelineComponent implements OnInit {
     const base = this.nodeHeightPx + diffDays * this.temporalMultiplier;
     return base > this.maxTemporalGapPx;
   }
+
 }

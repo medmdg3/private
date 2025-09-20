@@ -1,0 +1,36 @@
+<section class="faq">
+  <div class="container">
+    <header class="faq__header">
+      <h1>Frequently Asked Questions</h1>
+      <p>Explanations of competitions, organizations, and terms mentioned in my timeline</p>
+    </header>
+
+    <div class="faq__filters">
+      <button
+        *ngFor="let category of categories"
+        class="faq__filter-btn"
+        [class.active]="selectedCategory === category"
+        (click)="selectCategory(category)"
+      >
+        {{ category }}
+      </button>
+    </div>
+
+    <div class="faq__content">
+      <div class="faq__item" *ngFor="let item of filteredItems">
+        <div class="faq__question">
+          <h3>{{ item.question }}</h3>
+          <span class="faq__category">{{ item.category }}</span>
+        </div>
+        <div class="faq__answer">
+          <p>{{ item.answer }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq__footer" *ngIf="filteredItems.length === 0">
+      <p>No items found for the selected category.</p>
+    </div>
+  </div>
+</section>
+
