@@ -63,10 +63,21 @@ export class TimelineComponent implements OnInit {
     }
   }
 
+  // Replace disallowed typography (e.g., em dash) with allowed equivalents
+  private sanitizeText(text?: string): string | undefined {
+    if (!text) return text;
+    // Replace em dash + optional space with a simple hyphen spacing
+    return text
+      .replace(/\u2014\s?/g, ' - ')
+      .replace(/\s+-\s+/g, ' - ');
+  }
+
   // Return the appropriate description based on toggle and fallback rules
   getDescription(e: TimelineEvent): string | undefined {
-    if (this.useShortDescriptions) return e.shortDescription || e.description;
-    return e.description || e.shortDescription;
+    const picked = this.useShortDescriptions
+      ? (e.shortDescription || e.description)
+      : (e.description || e.shortDescription);
+    return this.sanitizeText(picked);
   }
 
   ngOnInit(): void {

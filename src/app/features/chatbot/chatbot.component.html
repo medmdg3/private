@@ -1,0 +1,91 @@
+<!-- Chatbot Trigger Button -->
+<button class="chatbot-trigger" (click)="openChat()" title="Chat with Mdg's Only Friend">
+  <div class="trigger-icon">🤖</div>
+  <div class="trigger-text">Chat</div>
+  <div class="notification-badge" *ngIf="!isOpen">!</div>
+</button>
+
+<!-- Chatbot Modal Overlay -->
+<div class="chatbot-overlay" [class.open]="isOpen" (click)="closeChat()">
+  <div class="chatbot-modal" (click)="$event.stopPropagation()">
+    <div class="chatbot-container">
+      <div class="chatbot-header">
+        <div class="chatbot-avatar">
+          <div class="avatar-circle">🤖</div>
+        </div>
+        <div class="chatbot-info">
+          <h3>{{ personality.name }}</h3>
+          <p>{{ personality.description }}</p>
+        </div>
+        <div class="header-actions">
+          <button class="clear-btn" (click)="clearChat()" title="Clear chat">
+            🗑️
+          </button>
+          <button class="close-btn" (click)="closeChat()" title="Close chat">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="chatbot-messages" #messagesContainer>
+        <div 
+          *ngFor="let message of messages" 
+          class="message"
+          [class.user-message]="message.isUser"
+          [class.bot-message]="!message.isUser"
+        >
+          <div class="message-content">
+            <div class="message-text">{{ message.text }}</div>
+            <div class="message-time">
+              {{ message.timestamp | date:'short' }}
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="isTyping" class="message bot-message">
+          <div class="message-content">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chatbot-input">
+        <div class="input-container">
+          <input 
+            type="text" 
+            [(ngModel)]="currentMessage"
+            (keyup.enter)="sendMessage()"
+            placeholder="Ask me anything about Mdg..."
+            class="message-input"
+            [disabled]="isTyping"
+          >
+          <button 
+            (click)="sendMessage()" 
+            [disabled]="!currentMessage.trim() || isTyping"
+            class="send-btn"
+          >
+            {{ isTyping ? '⏳' : '➤' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="suggestions">
+        <h4>Try asking:</h4>
+        <div class="suggestion-chips">
+          <button 
+            *ngFor="let suggestion of getSuggestions()" 
+            (click)="askSuggestion(suggestion)"
+            class="suggestion-chip"
+            [disabled]="isTyping"
+          >
+            {{ suggestion }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

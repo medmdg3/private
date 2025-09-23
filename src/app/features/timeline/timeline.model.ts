@@ -29,6 +29,8 @@ export interface TimelineEvent {
   title: string; // e.g., 'Senior Developer'
   subtitle?: string; // e.g., 'Company XYZ'
   description?: string;
+  /** Optional concise summary shown in compact views */
+  shortDescription?: string;
   /** Tags associated with the event */
   tags?: (import('./tags').Tag | string)[];
   /** Unified, ordered media list (preferred). */
@@ -40,4 +42,6 @@ export interface TimelineEvent {
   golden?: boolean;
   /** If true, render the dot as a diamond with an icy glow */
   diamond?: boolean;
+  /** Allow forward-compatible optional fields without breaking type checks */
+  [extraField: string]: unknown;
 }

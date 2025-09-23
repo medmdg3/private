@@ -6,8 +6,8 @@ export const TIMELINE: TimelineEvent[] = [
     title: 'The Beginning',
     subtitle: 'Fes, Morocco',
     description:
-      'On August 15, 2003, I was born in Fes, Morocco.\n\nIf you wish to explore beyond this point,way beyond,you may need to consult some history books... or even trace things back to the very start of the universe as we know it. Your call.\n\nP.S. I am the one standing on the tree.',
-    shortDescription: 'Born in Fes, Morocco.\n\nIf you want to go further back than that, you\'ll need a history book or maybe a cosmology timeline.\n\nI\'m the one standing on the tree.',
+      'On August 15, 2003, I made my grand entrance into this world in Fes, Morocco. \n\nIf you want to go further back in time, you\'ll need to consult some history books... or maybe trace things back to the Big Bang. Your call, but I\'m pretty sure the dinosaurs weren\'t doing competitive programming, unless...\n\nP.S. Yes, that\'s me standing on the tree like some kind of tiny autistic philosopher.',
+    shortDescription: 'Born in Fes, Morocco. Probably already planning my first algorithm while in the womb. \n\nIf you want to go further back, you\'ll need a history book or cosmology degree. I\'m the tiny human on the tree.',
     tags: [],
     photos: [{ src: 'assets/young-me.jpg' , keepRatio:true}],
     diamond: true
@@ -17,8 +17,8 @@ export const TIMELINE: TimelineEvent[] = [
     title: 'MOI 2019 Semi-final',
     subtitle: '1337 Khouribga',
     description:
-      'In April 2019, I participated in the Moroccan Olympiad in Informatics (MOI) semi-final, held at 1337 Khouribga.\nIt was my first time joining such a big competition. The hospitality was excellent, the contest was fun, and I enjoyed every bit of the experience.\nMost importantly, I managed to qualify for the final round,barely, but enough to make it count.\n\nP.S. The person taking the selfie is our coach, Moncef Mhasni.',
-    shortDescription: 'First big contest: the MOI semi-final at 1337 Khouribga. The welcome was great, the round was fun, and I learned a lot.\n\nI qualified for the final by a hair.\n\nThe selfie was taken by our coach, Moncef Mhasni.',
+      'April 2019: My first rodeo at the MOI semi-final in 1337 Khouribga! \n\nPicture this: a 15-year-old me, probably looking like I\'d never seen a computer before, walking into Morocco\'s biggest programming contest. The hospitality was incredible! They basically rolled out the red carpet for us nerds.\n\nI somehow managed to qualify for the final by the skin of my teeth. I mean, I was probably the last person to make it through, but hey, a win is a win! (My future self would be proud of this "barely scraping by" strategy, it becomes a recurring theme 😅)\n\nP.S. That selfie? Taken by our legendary coach Moncef Mhasni, who probably had more faith in me than I had in myself.',
+    shortDescription: 'First big contest at 1337 Khouribga! Felt like a fish out of water but somehow qualified by a hair. \n\nCoach Moncef took that selfie - he had more faith in me than I did!',
     tags: ['MOI', 'Competitive Programming', 'National'],
     photos: ['assets/moi-2019-first-camp.jpg', 'assets/moi-2019-first-camp-2.jpg']
   },
@@ -27,8 +27,8 @@ export const TIMELINE: TimelineEvent[] = [
     title: 'MOI 2019 Final',
     subtitle: 'Rabat – Ministry of National Education',
     description:
-      'In May 2019, I participated in the Moroccan Olympiad in Informatics (MOI) final, held in Rabat at the Ministry of National Education.\n\nThe competition was tough, and despite my 7th place finish, the gap between me and the leaders was enough to show me that I still had a lot to learn. This result was both humbling and motivating for the road ahead, officially concluding my 2019 season.',
-    shortDescription: 'Final in Rabat at the ministry. I placed 7th. The gap to the top showed how much I still had to learn. Humbling, and a useful end to the 2019 season.',
+      'May 2019: The MOI final in Rabat - my first taste of the big leagues! \n\nSo there I was, at the Ministry of National Education (fancy, right?), probably the youngest person in the room and definitely the most nervous. The competition was brutal!! These guys were solving problems I didn\'t even know existed.\n\nI finished 7th, which sounds decent until you realize there were only like 20 people competing... But hey, the gap between me and the top dogs was so wide you could fit my intelligence in it (sorry, I had to). This was my "welcome to reality" moment, humbling, yes, but also the fuel that would drive me for years to come.\n\nOfficially concluded my 2019 season with a healthy dose of humility and a burning desire to get better!',
+    shortDescription: 'MOI final in Rabat - finished 7th and got a reality check. The gap to the top was wider than the Atlantic! \n\nHumbling but motivating - exactly what I needed to fuel my competitive fire.',
     tags: ['MOI', 'Competitive Programming', 'National'],
     photos: [{ src: 'assets/moi-2019-final.jpg', keepRatio: true }]
   },
@@ -61,8 +61,8 @@ export const TIMELINE: TimelineEvent[] = [
     title: 'MOI 2021 Final',
     subtitle: 'Rabat – MOI Finals',
     description:
-      'The 2021 season was unlike any other. Instead of a predictable favorite, the title came down to four names. As always, it was a 5-hour, IOI-style contest. In the very last minute, a literal 15-point clutch made me the Moroccan Olympiad in Informatics (MOI 2021) champion.\n\nShout-out to the amazing competitors who rounded out the top four: Ayman Riad Solh, Nabil Boudraa, and Aymane Moutei.',
-    shortDescription: 'A wild season with four real contenders. IOI-style, 5 hours. In the last minute a 15-point submission made me MOI 2021 champion.\n\nShout-out to Ayman Riad Solh, Nabil Boudraa, and Aymane Moutei.',
+      '2021: The year I became MOI champion and probably gave my parents a heart attack! 🏆\n\nThis season was absolutely WILD. Instead of one clear favorite, we had four absolute beasts going head-to-head. Picture a 5-hour IOI-style contest where every point mattered and the tension was thicker than my morning coffee.\n\nAnd then it happened..the most dramatic moment of my life. In the literal last minute, I submitted a solution worth 15 points. My heart was probably beating faster than a hummingbird\'s wings. When the results came out and I saw "1st place" next to my name, I think I blacked out for a solid 30 seconds.\n\nShout-out to the legends who made this victory meaningful: Ayman Riad Solh, Nabil Boudraa, and Aymane Moutei. You guys are the reason this win felt so special!',
+    shortDescription: '2021: Became MOI champion in the most dramatic way possible - 15-point clutch in the last minute! \n\nFour-way battle royale that ended with me probably having a minor heart attack. Worth it!',
     tags: ['Competitive Programming', 'MOI', 'National'],
     photos: [{ src: 'assets/moi-champion.jpg', keepRatio: true }],
     diamond: true
@@ -228,7 +228,7 @@ export const TIMELINE: TimelineEvent[] = [
     subtitle: 'ENSAM Meknes',
     description:
       'On March 9, 2024, we won AMPC at ENSAM Meknes—teaming up with my classmates Salma Mahdioui and El Mejbar Otmane.\n\nThe feeling was indescribable: it was my first win after deciding to compete with classmates from my own school. The first prize was 10,000 MAD (~$1,100), and it left me more than ready for the next challenge.',
-    shortDescription: 'Won AMPC with my classmates Salma Mahdioui and El Mejbar Otmane. First prize: 10,000 MAD (~$1,100). First win after switching to school-based teams; it felt great.',
+    shortDescription: 'Won AMPC with my classmates Salma Mahdioui (Such an amazing person! and no she did not write this I did!)and El Mejbar Otmane. First prize: 10,000 MAD (~$1,100). First win after switching to school-based teams; it felt great.',
     tags: ['Competitive Programming', 'AMPC', 'National'],
     photos: [
       { src: 'assets/ampc-2024.jpg', keepRatio: true }
