@@ -1,0 +1,99 @@
+<section class="achievements">
+  <div class="achievements-header">
+    <h2>🏆 Achievement Dashboard</h2>
+    <p>Numbers that tell the story of dedication, excellence, and impact</p>
+  </div>
+
+  <!-- Category Filter -->
+  <div class="category-filter">
+    <button 
+      *ngFor="let category of ['all', 'competition', 'leadership', 'education', 'international']"
+      [class.active]="selectedCategory === category"
+      (click)="selectedCategory = category"
+      class="filter-btn"
+    >
+      <span class="filter-icon">
+        {{ category === 'all' ? '🌟' : 
+           category === 'competition' ? '🏆' :
+           category === 'leadership' ? '👑' :
+           category === 'education' ? '📚' : '🌍' }}
+      </span>
+      <span class="filter-text">{{ category | titlecase }}</span>
+    </button>
+  </div>
+
+  <!-- Achievement Categories -->
+  <div class="achievement-categories">
+    <div 
+      *ngFor="let category of getFilteredCategories()" 
+      class="achievement-category"
+    >
+      <div class="category-header">
+        <div class="category-title">
+          <span class="category-icon">{{ category.icon }}</span>
+          <h3>{{ category.name }}</h3>
+        </div>
+        <div class="category-stats">
+          <span class="stat">
+            <strong>{{ getCategoryStats(category).total }}</strong> achievements
+          </span>
+          <span class="stat" *ngIf="getCategoryStats(category).golden > 0">
+            <strong>{{ getCategoryStats(category).golden }}</strong> golden
+          </span>
+          <span class="stat" *ngIf="getCategoryStats(category).international > 0">
+            <strong>{{ getCategoryStats(category).international }}</strong> international
+          </span>
+        </div>
+      </div>
+
+      <div class="achievements-grid">
+        <div 
+          *ngFor="let achievement of category.achievements" 
+          class="achievement-card"
+          [style.--accent-color]="achievement.color"
+        >
+          <div class="achievement-icon">{{ achievement.icon }}</div>
+          
+          <div class="achievement-content">
+            <div class="achievement-value">
+              <span class="value-number">{{ animatedValues[achievement.id] || 0 }}</span>
+              <span class="value-unit">{{ achievement.unit }}</span>
+            </div>
+            
+            <h4 class="achievement-title">{{ achievement.title }}</h4>
+            <p class="achievement-description">{{ achievement.description }}</p>
+          </div>
+
+          <div class="achievement-glow"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="summary-stats">
+    <div class="summary-card">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-content">
+        <h4>Total Impact</h4>
+        <p>10+ years of competitive programming excellence</p>
+      </div>
+    </div>
+    
+    <div class="summary-card">
+      <div class="summary-icon">🌍</div>
+      <div class="summary-content">
+        <h4>Global Recognition</h4>
+        <p>Represented Morocco on international stages</p>
+      </div>
+    </div>
+    
+    <div class="summary-card">
+      <div class="summary-icon">👥</div>
+      <div class="summary-content">
+        <h4>Community Leadership</h4>
+        <p>Mentoring the next generation of programmers</p>
+      </div>
+    </div>
+  </div>
+</section>

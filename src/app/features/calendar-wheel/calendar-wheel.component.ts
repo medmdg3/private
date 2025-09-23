@@ -116,11 +116,6 @@ export class CalendarWheelComponent implements OnInit, OnDestroy {
     this.selectYear(selectedYear);
   }
 
-  selectYear(year: number): void {
-    this.selectedYear = year;
-    this.selectedYearData = this.yearEvents.find(ye => ye.year === year) || null;
-    this.isModalOpen = true;
-  }
 
   closeModal(): void {
     this.isModalOpen = false;
@@ -158,5 +153,11 @@ export class CalendarWheelComponent implements OnInit, OnDestroy {
     const normalizedRotation = ((this.currentRotation % 360) + 360) % 360;
     const yearIndex = Math.floor((normalizedRotation / 360) * this.years.length);
     return this.years[yearIndex];
+  }
+
+  selectYear(year: number): void {
+    this.selectedYear = year;
+    this.selectedYearData = this.yearEvents.find(ye => ye.year === year) || null;
+    this.isModalOpen = true;
   }
 }

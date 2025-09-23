@@ -33,22 +33,25 @@
           class="message"
           [class.user-message]="message.isUser"
           [class.bot-message]="!message.isUser"
+          [class.achievement-message]="message.type === 'achievement'"
+          [class.timeline-message]="message.type === 'timeline'"
         >
           <div class="message-content">
-            <div class="message-text">{{ message.text }}</div>
+            <div class="message-text" [innerHTML]="message.text"></div>
             <div class="message-time">
               {{ message.timestamp | date:'short' }}
             </div>
           </div>
         </div>
         
-        <div *ngIf="isTyping" class="message bot-message">
+        <div *ngIf="isTyping" class="message bot-message typing-message">
           <div class="message-content">
             <div class="typing-indicator">
               <span></span>
               <span></span>
               <span></span>
             </div>
+            <div class="typing-text">{{ getTypingIndicatorText() }}</div>
           </div>
         </div>
       </div>
@@ -56,13 +59,24 @@
       <div class="chatbot-input">
         <div class="input-container">
           <input 
+            #messageInput
             type="text" 
             [(ngModel)]="currentMessage"
-            (keyup.enter)="sendMessage()"
+            (keydown)="onKeyPress($event)"
             placeholder="Ask me anything about Mdg..."
             class="message-input"
             [disabled]="isTyping"
           >
+          <button 
+            *ngIf="isVoiceSupported()"
+            (click)="isListening ? stopVoiceInput() : startVoiceInput()" 
+            [disabled]="isTyping"
+            class="voice-btn"
+            [class.listening]="isListening"
+            title="{{ isListening ? 'Stop listening' : 'Start voice input' }}"
+          >
+            {{ isListening ? '🎤' : '🎙️' }}
+          </button>
           <button 
             (click)="sendMessage()" 
             [disabled]="!currentMessage.trim() || isTyping"
@@ -70,6 +84,10 @@
           >
             {{ isTyping ? '⏳' : '➤' }}
           </button>
+        </div>
+        <div class="input-hints" *ngIf="!isTyping">
+          <span class="hint">Press Enter to send • Shift+Enter for new line</span>
+          <span class="hint" *ngIf="isVoiceSupported()">• Click mic for voice input</span>
         </div>
       </div>
 

@@ -3,11 +3,19 @@ import { TimelineComponent } from './features/timeline/timeline.component';
 import { HomeComponent } from './features/home/home.component';
 import { ProjectsComponent } from './features/projects/projects.component';
 import { FaqComponent } from './features/faq/faq.component';
+import { AchievementsComponent } from './features/achievements/achievements.component';
+import { SkillsComponent } from './features/skills/skills.component';
+import { TestimonialsComponent } from './features/testimonials/testimonials.component';
+import { ContactComponent } from './features/contact/contact.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'timeline', component: TimelineComponent },
   { path: 'projects', component: ProjectsComponent },
+  { path: 'achievements', component: AchievementsComponent },
+  { path: 'skills', component: SkillsComponent },
+  { path: 'testimonials', component: TestimonialsComponent },
+  { path: 'contact', component: ContactComponent },
   { path: 'faq', component: FaqComponent },
   { path: '**', redirectTo: '' },
 ];
