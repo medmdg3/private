@@ -478,42 +478,85 @@
   }
 }
 
-.suggestions {
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  
-  h4 {
-    margin: 0 0 0.75rem 0;
-    font-size: 0.875rem;
-    color: var(--muted, #a0a0a0);
-    font-weight: 500;
+.scope-reminder {
+  padding: 1.25rem 1.5rem;
+  background: rgba(15, 23, 42, 0.65);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reminder-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--muted, #a0a0a0);
+  line-height: 1.5;
+
+  strong {
+    color: var(--text, #ffffff);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
   }
 }
 
-.suggestion-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.scope-prompts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
 }
 
-.suggestion-chip {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
+.prompt-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: var(--accent, #667eea);
+    transform: translateY(-2px);
+  }
+
+  h4 {
+    margin: 0 0 0.25rem;
+    font-size: 0.95rem;
+    color: var(--text, #ffffff);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--muted, #a0a0a0);
+    line-height: 1.45;
+  }
+}
+
+.prompt-action {
+  align-self: flex-start;
   padding: 0.5rem 1rem;
-  color: var(--text, #ffffff);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--accent, #667eea);
+  border: 1px solid rgba(102, 126, 234, 0.2);
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
+    background: rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.4);
   }
-  
+
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
   }
 }

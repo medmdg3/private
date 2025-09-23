@@ -35,9 +35,28 @@ interface ChatbotPersonality {
 interface ConversationContext {
   lastTopic: string;
   mentionedYears: number[];
-  mentionedCompetitions: string[];
-  userInterests: string[];
   conversationHistory: string[];
+}
+
+interface QuickPrompt {
+  id: 'timeline' | 'personality' | 'contact';
+  title: string;
+  description: string;
+  sample: string;
+}
+
+interface ContactDetail {
+  label: string;
+  value: string;
+  link?: string;
+  note?: string;
+}
+
+interface ContactDetail {
+  label: string;
+  value: string;
+  link?: string;
+  note?: string;
 }
 
 @Component({
@@ -61,11 +80,61 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
   context: ConversationContext = {
     lastTopic: '',
     mentionedYears: [],
-    mentionedCompetitions: [],
-    userInterests: [],
     conversationHistory: []
   };
   private typingTimeout: any = null;
+
+  quickPrompts: QuickPrompt[] = [
+    {
+      id: 'timeline',
+      title: 'Explore the Timeline',
+      description: 'Ask about milestones, competitions, or specific years.',
+      sample: 'Walk me through what happened in 2024 on his timeline.'
+    },
+    {
+      id: 'personality',
+      title: 'Understand His Personality',
+      description: 'Learn what it’s like to work with or learn from him.',
+      sample: 'How would you describe his personality and leadership style?'
+    },
+    {
+      id: 'contact',
+      title: 'Reach Out',
+      description: 'Find the best way to get in touch for collaboration.',
+      sample: 'What’s the best way to contact him for a collaboration?'
+    }
+  ];
+
+  private contactDetails: ContactDetail[] = [
+    {
+      label: 'Email',
+      value: 'benomar.mohammed@emi.ac.ma',
+      link: 'mailto:benomar.mohammed@emi.ac.ma',
+      note: 'Best for collaboration proposals, mentorship requests, or formal opportunities.'
+    },
+    {
+      label: 'LinkedIn',
+      value: 'linkedin.com/in/mohammed-benomar',
+      link: 'https://linkedin.com/in/mohammed-benomar',
+      note: 'Professional networking, speaking invitations, or detailed introductions.'
+    },
+    {
+      label: 'GitHub',
+      value: 'github.com/mohammed-benomar',
+      link: 'https://github.com/mohammed-benomar',
+      note: 'Explore ongoing projects or share development-focused collaborations.'
+    },
+    {
+      label: 'Codeforces',
+      value: 'codeforces.com/profile/medmdg_3',
+      link: 'https://codeforces.com/profile/medmdg_3',
+      note: 'Great for competitive programming discussions or to follow his contest activity.'
+    }
+  ];
+
+  private timelineEventsByYear = new Map<number, TimelineEvent[]>();
+  private timelineYears: number[] = [];
+  private timelineKeywords = new Map<string, Set<TimelineEvent>>();
 
   personality: ChatbotPersonality = {
     name: "Mdg's Only Friend",
@@ -150,6 +219,7 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.initializeVoiceRecognition();
+    this.buildKnowledgeGraph();
     this.loadConversationHistory();
   }
 
@@ -260,6 +330,14 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  triggerQuickPrompt(prompt: QuickPrompt): void {
+    if (this.isTyping) {
+      return;
+    }
+    this.currentMessage = prompt.sample;
+    this.sendMessage();
+  }
+
   stopVoiceInput(): void {
     if (this.recognition && this.isListening) {
       this.recognition.stop();
@@ -282,22 +360,6 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     }
-
-    // Extract competitions mentioned
-    const competitions = ['moi', 'ioi', 'codeforces', 'jnjd', 'codeit', 'game of code', 'ampc', 'it-holic', 'codemi', 'mmc', 'imc', 'aui compete'];
-    competitions.forEach(comp => {
-      if (userInput.includes(comp) && !this.context.mentionedCompetitions.includes(comp)) {
-        this.context.mentionedCompetitions.push(comp);
-      }
-    });
-
-    // Extract interests
-    const interestKeywords = ['programming', 'algorithms', 'competitions', 'education', 'personality', 'achievements', 'projects', 'skills'];
-    interestKeywords.forEach(interest => {
-      if (userInput.includes(interest) && !this.context.userInterests.includes(interest)) {
-        this.context.userInterests.push(interest);
-      }
-    });
   }
 
   private addUserMessage(text: string): void {
@@ -328,64 +390,45 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Check for specific questions about Mdg
     if (this.containsAny(input, ['who is mdg', 'tell me about mdg', 'what is mdg', 'about mdg', 'who are you', 'what do you know about mdg', 'describe mdg'])) {
-      return this.getRandomResponse('aboutMdgs');
+      return this.getScopeReminder();
     }
 
     // Check for timeline questions
     if (this.containsAny(input, ['timeline', 'journey', 'story', 'career', 'path', 'history', 'background', 'life story', 'what happened', 'when did', 'how did he start'])) {
-      return this.getRandomResponse('timeline');
+      this.context.lastTopic = 'timeline';
+      return this.getTimelineIntro();
     }
 
     // Check for personality questions
     if (this.containsAny(input, ['personality', 'character', 'traits', 'like', 'kind of person', 'autistic', 'funny', 'smart', 'passionate', 'what is he like', 'how is he', 'describe his personality'])) {
+      this.context.lastTopic = 'personality';
       return this.getRandomResponse('personality');
-    }
-
-    // Check for competition questions
-    if (this.containsAny(input, ['competition', 'contest', 'win', 'achievement', 'trophy', 'medal', 'moi', 'ioi', 'codeforces', 'jnjd', 'codeit', 'game of code', 'ampc', 'it-holic', 'codemi', 'mmc', 'imc', 'what did he win', 'victories', 'successes'])) {
-      return this.getRandomResponse('competitions');
-    }
-
-    // Check for education questions
-    if (this.containsAny(input, ['education', 'school', 'university', 'cpge', 'emi', 'study', 'degree', 'academic', 'where did he study', 'what did he study', 'college', 'university'])) {
-      return this.getRandomResponse('education');
-    }
-
-    // Check for achievements questions
-    if (this.containsAny(input, ['achievements', 'accomplishments', 'what has he done', 'major wins', 'biggest wins', 'notable achievements'])) {
-      return this.getRandomResponse('achievements');
-    }
-
-    // Check for projects questions
-    if (this.containsAny(input, ['projects', 'work', 'what is he working on', 'current projects', 'side projects', 'initiatives'])) {
-      return this.getRandomResponse('projects');
-    }
-
-    // Check for skills questions
-    if (this.containsAny(input, ['skills', 'abilities', 'what can he do', 'technical skills', 'programming languages', 'expertise'])) {
-      return this.getRandomResponse('skills');
     }
 
     // Check for contact questions
     if (this.containsAny(input, ['contact', 'reach out', 'get in touch', 'connect', 'how to contact', 'email', 'social media'])) {
+      this.context.lastTopic = 'contact';
       return this.getRandomResponse('contact');
     }
 
     // Check for specific timeline events with better matching
     const timelineResponse = this.getTimelineResponse(input);
     if (timelineResponse) {
+      this.context.lastTopic = 'timeline';
       return timelineResponse;
     }
 
     // Check for specific achievements or facts
     const achievementResponse = this.getAchievementResponse(input);
     if (achievementResponse) {
+      this.context.lastTopic = 'timeline';
       return achievementResponse;
     }
 
     // Check for questions about specific years
     const yearResponse = this.getYearResponse(input);
     if (yearResponse) {
+      this.context.lastTopic = 'timeline';
       return yearResponse;
     }
 
@@ -411,7 +454,10 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
     // If user is asking follow-up questions about a topic
     if (this.context.lastTopic) {
       if (this.containsAny(input, ['more', 'tell me more', 'what else', 'anything else', 'other', 'additional'])) {
-        return this.getFollowUpResponse(this.context.lastTopic);
+        if (['timeline', 'personality', 'contact'].includes(this.context.lastTopic)) {
+          return this.getFollowUpResponse(this.context.lastTopic);
+        }
+        return this.getScopeReminder();
       }
     }
 
@@ -426,20 +472,20 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getFollowUpResponse(topic: string): string {
     const followUps: { [key: string]: string[] } = {
-      competitions: [
-        "Want to know more about his competition strategy? Mdg is known for his calm approach under pressure and his ability to think clearly even in the most intense moments!",
-        "His competition journey is full of interesting stories! Like that time he solved a problem in the last 5 minutes of MOI 2021 and became champion!",
-        "Mdg doesn't just compete - he also helps organize competitions now as head of MOI Scientific Committee. Talk about giving back to the community!"
-      ],
       personality: [
         "What's really cool about Mdg's personality is how he combines serious technical skills with a great sense of humor. He can make anyone laugh while explaining complex algorithms!",
         "His neurodivergent traits actually give him superpowers in competitive programming - that hyperfocus ability is like having a laser beam for a brain!",
         "Mdg is incredibly humble despite all his achievements. He's always willing to help others learn and grow in competitive programming."
       ],
-      education: [
-        "His educational path shows incredible dedication - from CPGE to EMI while simultaneously dominating competitions. It's like he has superhuman time management skills!",
-        "What's impressive is how he balances rigorous academics with competitive programming. Most people would struggle with just one of those!",
-        "Mdg's education journey proves that you can excel in both academics and competitions if you're passionate and organized enough."
+      timeline: [
+        "Each year on Mdg's timeline has its own story. Feel free to ask about a specific year if you're curious!",
+        "Want more timeline details? Pick a moment, and I'll walk you through what happened and why it mattered.",
+        "His timeline is packed with milestones. Asking about a particular competition or role can help me zoom in." 
+      ],
+      contact: [
+        "If you're looking to reach out, I can share the best ways to contact him professionally.",
+        "Need his preferred contact channel? Just let me know whether you prefer social media or email.",
+        "Happy to help you connect with Mdg—ask about mentoring, collaboration, or general inquiries." 
       ]
     };
 
@@ -448,24 +494,11 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private getContextualDefaultResponse(): string {
-    const defaults = this.personality.responses.default;
-    
-    // If user has shown interest in specific topics, suggest related ones
-    if (this.context.userInterests.length > 0) {
-      const interest = this.context.userInterests[this.context.userInterests.length - 1];
-      const suggestions: { [key: string]: string } = {
-        programming: "Since you're interested in programming, you might want to ask about Mdg's technical skills or his approach to problem-solving!",
-        competitions: "Given your interest in competitions, I could tell you more about Mdg's biggest wins or his competition strategy!",
-        education: "If you're curious about education, I can share more about Mdg's academic journey from CPGE to EMI!",
-        personality: "Since you're interested in personality, I could tell you more about what makes Mdg unique and how his traits help him succeed!"
-      };
-      
-      if (suggestions[interest]) {
-        return suggestions[interest];
-      }
-    }
+    return this.getScopeReminder();
+  }
 
-    return defaults[Math.floor(Math.random() * defaults.length)];
+  private getScopeReminder(): string {
+    return 'Let\'s stay focused on Mdg\'s timeline, his personality, or how to contact him. Try asking about a particular year, what he\'s like, or the best ways to reach out.';
   }
 
   private getTimelineResponse(userInput: string): string | null {
@@ -518,38 +551,32 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    // Check for Codeforces achievements
-    if (this.containsAny(userInput, ['master', 'candidate master', 'rating', 'codeforces rank'])) {
-      const codeforcesEvents = events.filter(e => e.title.toLowerCase().includes('codeforces'));
-      if (codeforcesEvents.length > 0) {
-        const event = codeforcesEvents[0];
-        return `Mdg reached ${event.title} on Codeforces! ${event.shortDescription || event.description?.substring(0, 120) + '...' || 'That\'s a huge achievement in competitive programming!'}`;
-      }
-    }
-
     return null;
   }
 
   private getYearResponse(userInput: string): string | null {
     const events = TIMELINE;
     
-    // Check for decade questions
-    if (this.containsAny(userInput, ['2019', '2020', '2021', '2022', '2023', '2024', '2025'])) {
-      const yearMatch = userInput.match(/(\d{4})/);
-      if (yearMatch) {
-        const year = parseInt(yearMatch[1]);
-        const yearEvents = events.filter(e => new Date(e.date).getFullYear() === year);
-        
-        if (yearEvents.length > 0) {
-          const majorEvent = yearEvents.find(e => e.golden || e.diamond) || yearEvents[0];
-          const eventCount = yearEvents.length;
-          
-          return `In ${year}, Mdg had ${eventCount} major event${eventCount > 1 ? 's' : ''}! The standout was ${majorEvent.title}. ${majorEvent.shortDescription || majorEvent.description?.substring(0, 100) + '...' || 'It was quite a year for him!'}`;
-        }
-      }
+    const yearMatch = userInput.match(/(\d{4})/);
+    if (!yearMatch) {
+      return null;
     }
 
-    return null;
+    const year = parseInt(yearMatch[1], 10);
+    const yearEvents = events.filter(e => new Date(e.date).getFullYear() === year);
+    if (yearEvents.length === 0) {
+      return `There are no recorded events for ${year} on Mdg's timeline yet. Try another year or ask about a major milestone.`;
+    }
+
+    const summary = yearEvents
+      .map(event => {
+        const month = new Date(event.date).toLocaleString('default', { month: 'long' });
+        const snippet = event.shortDescription || event.description?.slice(0, 120) || '';
+        return `${month}: ${event.title}${snippet ? ` — ${snippet}` : ''}`;
+      })
+      .join('\n');
+
+    return `Here is what happened in ${year} across Mdg's timeline:\n${summary}`;
   }
 
   private containsAny(text: string, keywords: string[]): boolean {
@@ -566,8 +593,6 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
     this.context = {
       lastTopic: '',
       mentionedYears: [],
-      mentionedCompetitions: [],
-      userInterests: [],
       conversationHistory: []
     };
     this.addBotMessage(this.getRandomResponse('greetings'));
@@ -592,19 +617,6 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.context.mentionedYears.length > 0) {
       const year = this.context.mentionedYears[this.context.mentionedYears.length - 1];
       contextualSuggestions.push(`What else happened in ${year}?`);
-    }
-
-    if (this.context.mentionedCompetitions.length > 0) {
-      const comp = this.context.mentionedCompetitions[this.context.mentionedCompetitions.length - 1];
-      contextualSuggestions.push(`Tell me more about ${comp.toUpperCase()}`);
-    }
-
-    if (this.context.userInterests.includes('programming')) {
-      contextualSuggestions.push("What programming languages does he know?");
-    }
-
-    if (this.context.userInterests.includes('competitions')) {
-      contextualSuggestions.push("What's his competition strategy?");
     }
 
     // Return a mix of base and contextual suggestions

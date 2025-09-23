@@ -91,17 +91,30 @@
         </div>
       </div>
 
-      <div class="suggestions">
-        <h4>Try asking:</h4>
-        <div class="suggestion-chips">
-          <button 
-            *ngFor="let suggestion of getSuggestions()" 
-            (click)="askSuggestion(suggestion)"
-            class="suggestion-chip"
-            [disabled]="isTyping"
+      <div class="scope-reminder">
+        <div class="reminder-text">
+          <strong>Tip</strong>
+          Ask about a specific year in his journey, what he’s like to work with, or the best way to reach out.
+        </div>
+
+        <div class="scope-prompts">
+          <div 
+            *ngFor="let prompt of quickPrompts"
+            class="prompt-card"
           >
-            {{ suggestion }}
-          </button>
+            <div class="prompt-content">
+              <h4>{{ prompt.title }}</h4>
+              <p>{{ prompt.description }}</p>
+            </div>
+            <button 
+              type="button"
+            class="prompt-action"
+              (click)="triggerQuickPrompt(prompt)"
+              [disabled]="isTyping"
+            >
+              Ask: “{{ prompt.sample }}”
+            </button>
+          </div>
         </div>
       </div>
     </div>
