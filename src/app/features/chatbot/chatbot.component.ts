@@ -303,6 +303,65 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
     localStorage.setItem('chatbot-conversation', JSON.stringify(data));
   }
 
+  private buildKnowledgeGraph(): void {
+    this.timelineEventsByYear.clear();
+    this.timelineKeywords.clear();
+
+    const sortedEvents = [...TIMELINE].sort((a, b) =>
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    const years = new Set<number>();
+
+    sortedEvents.forEach(event => {
+      const eventDate = new Date(event.date);
+      if (Number.isNaN(eventDate.getTime())) {
+        return;
+      }
+
+      const year = eventDate.getFullYear();
+      years.add(year);
+
+      const perYear = this.timelineEventsByYear.get(year);
+      if (perYear) {
+        perYear.push(event);
+      } else {
+        this.timelineEventsByYear.set(year, [event]);
+      }
+
+      const rawKeywords: string[] = [];
+      if (event.tags) {
+        event.tags.forEach(tag => rawKeywords.push(String(tag)));
+      }
+      if (event.title) rawKeywords.push(event.title);
+      if (event.subtitle) rawKeywords.push(event.subtitle);
+
+      const addKeyword = (keyword: string) => {
+        const normalized = keyword.trim().toLowerCase();
+        if (!normalized) {
+          return;
+        }
+
+        let bucket = this.timelineKeywords.get(normalized);
+        if (!bucket) {
+          bucket = new Set<TimelineEvent>();
+          this.timelineKeywords.set(normalized, bucket);
+        }
+        bucket.add(event);
+      };
+
+      rawKeywords.forEach(raw => {
+        addKeyword(raw);
+        raw
+          .split(/[^a-z0-9+]+/i)
+          .filter(Boolean)
+          .forEach(part => addKeyword(part));
+      });
+    });
+
+    this.timelineYears = Array.from(years).sort((a, b) => a - b);
+  }
+
   sendMessage(): void {
     if (!this.currentMessage.trim()) return;
 
@@ -440,6 +499,35 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Default response with context awareness
     return this.getContextualDefaultResponse();
+  }
+
+  private getTimelineIntro(): string {
+    if (!this.timelineYears.length) {
+      return "Mdg's timeline is loading—give me a moment and try again.";
+    }
+
+    const firstYear = this.timelineYears[0];
+    const lastYear = this.timelineYears[this.timelineYears.length - 1];
+    const totalEvents = TIMELINE.length;
+
+    const highlight = TIMELINE.find(e => e.golden) ||
+      TIMELINE.find(e => e.diamond) ||
+      (TIMELINE.length ? TIMELINE[TIMELINE.length - 1] : null);
+
+    const highlightYear = highlight ? new Date(highlight.date).getFullYear() : null;
+    const highlightTitle = highlight ? highlight.title : null;
+
+    const parts = [
+      `Mdg's journey spans from ${firstYear} to ${lastYear} with ${totalEvents} documented milestones.`
+    ];
+
+    if (highlight && highlightYear && highlightTitle) {
+      parts.push(`A standout moment is ${highlightTitle} in ${highlightYear}.`);
+    }
+
+    parts.push("Ask about a year, competition, or tag and I'll dig up the details.");
+
+    return parts.join(' ');
   }
 
   private getContextualGreeting(): string {
